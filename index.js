@@ -18,7 +18,23 @@ const server = http.createServer((req, res) => {
     query.id > 0
   ) {
     res.writeHead(200, { "Content-type": "text/html" });
-    res.end(`This is the LAPTOP page for Product ${query.id}`);
+
+    fs.readFile(
+      `${__dirname}/templates/template-laptop.html`,
+      "utf-8",
+      (err, data) => {
+        const laptopObj = laptopData[query.id];
+        let output = data.replace(/{%PRODUCTNAME%}/g, laptopObj.productName);
+        output = output.replace(/{%PRICE%}/g, laptopObj.price);
+        output = output.replace(/{%IMAGE%}/g, laptopObj.image);
+        output = output.replace(/{%SCREEN%}/g, laptopObj.screen);
+        output = output.replace(/{%CPU%}/g, laptopObj.cpu);
+        output = output.replace(/{%STORAGE%}/g, laptopObj.storage);
+        output = output.replace(/{%RAM%}/g, laptopObj.ram);
+        output = output.replace(/{%DESCRIPTION%}/g, laptopObj.description);
+        res.end(output);
+      }
+    );
   } else {
     res.writeHead(404, { "Content-type": "text/html" });
     res.end("Url was not found on the server");
